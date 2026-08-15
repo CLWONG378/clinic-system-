@@ -22,7 +22,7 @@ import os
 app = FastAPI()
 app.mount(
     "/uploads",
-    StaticFiles(directory="uploads"),
+    StaticFiles(directory=os.getenv("UPLOADS_PATH", "uploads")),
     name="uploads"
 )
 
