@@ -1,7 +1,7 @@
 import sqlite3
+import os
 
-
-DATABASE = "clinic.db"
+DATABASE = os.getenv("DATABASE_PATH", "clinic.db")
 
 
 
