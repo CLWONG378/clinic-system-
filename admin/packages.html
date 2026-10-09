@@ -1,45 +1,49 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="zh-hk">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>套餐管理 - 樂活醫療 lohas medical</title>
 
-<title>
-會員套餐
-</title>
-
-<link rel="stylesheet"
-href="../assets/css/style.css">
-
+  <!-- Absolute static path for CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-
 
 <body>
 
+  <header>
+    <h1>樂活醫療 lohas medical</h1>
+    <p>套餐管理</p>
+  </header>
 
-<h1>
-樂活醫療 lohas medical
-</h1>
+  <main>
+    <section>
+      <h2>現有套餐列表</h2>
+      <div id="packages">Loading...</div>
+    </section>
 
+    <!-- Optional: Add New Package Form -->
+    <section>
+      <h2>新增套餐</h2>
+      <div id="add-package-form">
+        <label for="package-name">套餐名稱</label>
+        <input id="package-name" type="text" placeholder="例如：脊柱矯正 10 次套餐">
 
-<h2>
-套餐管理
-</h2>
+        <label for="package-sessions">包含次數</label>
+        <input id="package-sessions" type="number" placeholder="例如：10">
 
+        <label for="package-price">價格 (HKD)</label>
+        <input id="package-price" type="number" placeholder="例如：5000">
 
-<div id="packages">
+        <button id="create-package" type="button">新增套餐</button>
+      </div>
+    </section>
+  </main>
 
-Loading...
-
-</div>
-
-
-
-<script src="../assets/js/packages.js"></script>
-
+  <!-- Absolute static path for JS -->
+  <script src="/assets/js/packages.js"></script>
 
 </body>
-
 
 </html>
