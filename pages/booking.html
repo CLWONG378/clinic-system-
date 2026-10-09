@@ -2,251 +2,89 @@
 <html lang="zh-hk">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>預約診症 - 樂活醫療 lohas medical</title>
 
-    <title>
-        預約診症 - 樂活醫療 lohas medical
-    </title>
-
-    <link rel="stylesheet" href="../assets/css/style.css">
-
+    <!-- Absolute static path for CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-
 
 <body>
 
-
-<header>
-
-    <img src="../assets/images/logo.png" alt="樂活醫療 lohas medical logo">
-
-
-    <h1 data-key="clinic_name">
-        樂活醫療 lohas medical
-    </h1>
-
-
-    <p data-key="tagline">
-        以愛為本 用心服務
-    </p>
-
-
-
-    <div class="language-switch">
-
-        <button onclick="changeLanguage('en')">
-            English
-        </button>
-
-
-        <button onclick="changeLanguage('zh-cn')">
-            简体
-        </button>
-
-
-        <button onclick="changeLanguage('zh-hk')">
-            繁體
-        </button>
-
-    </div>
-
-
-</header>
-
-
-
-
-<nav>
-
-    <a href="../index.html" data-key="home">
-        Home
-    </a>
-
-
-    <a href="booking.html" data-key="booking">
-        Booking
-    </a>
-
-
-</nav>
-
-
-
-
-
-<main>
-
-
-<section class="booking-section">
-
-
-<h2 data-key="booking_title">
-    預約診症
-</h2>
-
-
-
-
-<form id="booking-form">
-
-
-
-<h3 data-key="choose_service">
-    選擇服務
-</h3>
-
-
-
-<select id="service">
-
-
-<option value="疼痛康復">
-    疼痛康復
-</option>
-
-
-<option value="脊柱矯正">
-    脊柱矯正
-</option>
-
-
-<option value="產后康復">
-    產后康復
-</option>
-
-
-<option value="體態調整">
-    體態調整
-</option>
-
-
-</select>
-
-
-
-
-
-
-<h3 data-key="choose_datetime">
-    選擇預約時間
-</h3>
-
-
-
-<label data-key="appointment_date">
-    預約日期
-</label>
-
-
-<input id="appointment-date" type="date">
-
-
-
-
-
-<label data-key="appointment_time">
-    預約時間
-</label>
-
-
-<input id="appointment-time" type="time">
-
-
-
-
-
-
-
-<h3 data-key="patient_information">
-    客戶資料
-</h3>
-
-
-
-
-<label data-key="name">
-    姓名
-</label>
-
-
-<input id="name" type="text">
-
-
-
-
-
-<label data-key="phone">
-    電話
-</label>
-
-
-<input id="phone" type="tel">
-
-
-
-
-
-<label data-key="email">
-    電郵
-</label>
-
-
-<input id="email" type="email">
-
-
-
-
-
-
-<button type="submit" data-key="submit_booking">
-
-    提交預約
-
-</button>
-
-
-
-</form>
-
-
-
-</section>
-
-
-
-</main>
-
-
-
-
-
-
-
-<footer>
-
-
-<p>
-
-© 2026 樂活醫療 lohas medical
-
-</p>
-
-
-</footer>
-
-
-
-
-
-
-<script src="../assets/js/script.js"></script>
-
-<script src="../assets/js/booking.js"></script>
-
-
+    <header>
+        <img src="/assets/images/logo.png" alt="樂活醫療 lohas medical logo">
+
+        <h1 data-key="clinic_name">
+            樂活醫療 lohas medical
+        </h1>
+
+        <p data-key="tagline">
+            以愛為本 用心服務
+        </p>
+
+        <div class="language-switch">
+            <button type="button" onclick="changeLanguage('en')">English</button>
+            <button type="button" onclick="changeLanguage('zh-cn')">简体</button>
+            <button type="button" onclick="changeLanguage('zh-hk')">繁體</button>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/index.html" data-key="home">Home</a>
+        <a href="/pages/about.html" data-key="about">About</a>
+        <a href="/pages/services.html" data-key="services">Services</a>
+        <a href="/pages/contact.html" data-key="contact">Contact</a>
+        <a href="/pages/booking.html" data-key="booking">Book Appointment</a>
+    </nav>
+
+    <main>
+        <section class="booking-section">
+            <h2 data-key="booking_title">預約診症</h2>
+
+            <form id="booking-form">
+                <h3 data-key="choose_service">選擇服務</h3>
+                <select id="service" required>
+                    <option value="pain_rehabilitation" data-key="pain_rehabilitation">疼痛康復</option>
+                    <option value="spinal_correction" data-key="spinal_correction">脊柱矯正</option>
+                    <option value="postpartum_recovery" data-key="postpartum_recovery">產後康復</option>
+                    <option value="posture_adjustment" data-key="posture_adjustment">體態調整</option>
+                    <option value="foot_treatment" data-key="foot_treatment">足科治療</option>
+                    <option value="chinese_orthopedics" data-key="chinese_orthopedics">中醫骨科</option>
+                </select>
+
+                <h3 data-key="choose_datetime">選擇預約時間</h3>
+
+                <label for="appointment-date" data-key="appointment_date">預約日期</label>
+                <input id="appointment-date" type="date" required>
+
+                <label for="appointment-time" data-key="appointment_time">預約時間</label>
+                <input id="appointment-time" type="time" required>
+
+                <h3 data-key="patient_information">客戶資料</h3>
+
+                <label for="name" data-key="name">姓名</label>
+                <input id="name" type="text" placeholder="請輸入姓名" required>
+
+                <label for="phone" data-key="phone">電話</label>
+                <input id="phone" type="tel" placeholder="請輸入電話號碼" required>
+
+                <label for="email" data-key="email">電郵</label>
+                <input id="email" type="email" placeholder="example@email.com">
+
+                <button type="submit" data-key="submit_booking">提交預約</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 樂活醫療 lohas medical. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/assets/js/language.js"></script>
+    <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/booking.js"></script>
 
 </body>
 
