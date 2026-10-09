@@ -4,6 +4,7 @@ import uuid
 from pathlib import Path
 from fastapi import Body, FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -12,15 +13,21 @@ from database import create_tables, get_connection
 app = FastAPI()
 
 # --- Setup Directory Paths ---
+# BASE_DIR points to /app/backend
 BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = BASE_DIR.parent if (BASE_DIR / "main.py").exists() and BASE_DIR.name == "backend" else BASE_DIR
 
+# ROOT_DIR points to /app (the outer clinic-system directory in Docker)
+ROOT_DIR = BASE_DIR.parent if BASE_DIR.name == "backend" else BASE_DIR
+
+# Frontend directories in root
 ADMIN_DIR = ROOT_DIR / "admin"
 PAGES_DIR = ROOT_DIR / "pages"
 ASSETS_DIR = ROOT_DIR / "assets"
-UPLOADS_DIR = ROOT_DIR / "uploads"
 
-# Ensure uploads folder exists
+# Backend uploads directory
+UPLOADS_DIR = BASE_DIR / "uploads"
+
+# Ensure uploads directory exists
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # --- CORS Middleware ---
@@ -29,7 +36,8 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5500",
         "http://localhost:5500",
-        "https://lohasmedical.synology.me",
+        "https://lohas.synology.me",
+	"https://lohasmedical.synology.me",
         "https://www.lohas.com.hk",
         "http://www.lohas.com.hk",
     ],
@@ -83,6 +91,14 @@ class PatientUpdate(BaseModel):
 
 
 # --- API Endpoints ---
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    favicon_path = ROOT_DIR / "assets" / "favicon.ico"
+    if favicon_path.exists():
+        return FileResponse(favicon_path)
+    return {"message": "No favicon set"}
+
 
 @app.post("/booking")
 def create_booking(booking: Booking):
@@ -565,24 +581,31 @@ def consume_package(patient_id: int, service: str):
 
 # --- Static Files & Frontend HTML Mounts ---
 
-# 1. Uploaded treatment images
-app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+# 1. Uploads Directory
+if UPLOADS_DIR.exists():
+    app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
-# 2. Assets (CSS, JS, images used across the site)
+# 2. Shared Assets (CSS, JS, Images)
 if ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
-# 3. Admin Panel (Accessible at https://lohas.synology.me/admin/)
+# 3. Admin Panel Mount (Accessible at /admin/ or /admin/index.html)
 if ADMIN_DIR.exists():
     app.mount("/admin", StaticFiles(directory=str(ADMIN_DIR), html=True), name="admin")
+else:
+    app.mount("/admin", StaticFiles(directory="../admin", html=True), name="admin")
 
-# 4. Pages Folder (Accessible at https://lohas.synology.me/pages/...)
+# 4. Pages Folder Mount (Accessible at /pages/...)
 if PAGES_DIR.exists():
     app.mount("/pages", StaticFiles(directory=str(PAGES_DIR), html=True), name="pages")
+else:
+    app.mount("/pages", StaticFiles(directory="../pages", html=True), name="pages")
 
-# 5. Root Directory Index/Public Files (Accessible at https://lohas.synology.me/)
+# 5. Root Directory Catch-All (Serves index.html at root domain https://lohas.synology.me/)
 if ROOT_DIR.exists():
     app.mount("/", StaticFiles(directory=str(ROOT_DIR), html=True), name="root")
+else:
+    app.mount("/", StaticFiles(directory="../", html=True), name="root")
 
 
 # --- Entrypoint ---
