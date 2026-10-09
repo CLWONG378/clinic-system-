@@ -1,6 +1,7 @@
 import os
 import shutil
 import uuid
+from pathlib import Path
 from fastapi import Body, FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +10,18 @@ from pydantic import BaseModel
 from database import create_tables, get_connection
 
 app = FastAPI()
+
+# --- Setup Directory Paths ---
+BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent if (BASE_DIR / "main.py").exists() and BASE_DIR.name == "backend" else BASE_DIR
+
+ADMIN_DIR = ROOT_DIR / "admin"
+PAGES_DIR = ROOT_DIR / "pages"
+ASSETS_DIR = ROOT_DIR / "assets"
+UPLOADS_DIR = ROOT_DIR / "uploads"
+
+# Ensure uploads folder exists
+os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # --- CORS Middleware ---
 app.add_middleware(
@@ -303,8 +316,7 @@ def upload_treatment(
 
     if image:
         filename = f"{uuid.uuid4()}_{image.filename}"
-        os.makedirs("uploads", exist_ok=True)
-        path = os.path.join("uploads", filename)
+        path = UPLOADS_DIR / filename
 
         with open(path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
@@ -553,20 +565,24 @@ def consume_package(patient_id: int, service: str):
 
 # --- Static Files & Frontend HTML Mounts ---
 
-# Uploaded images
-app.mount(
-    "/uploads",
-    StaticFiles(directory=os.getenv("UPLOADS_PATH", "uploads")),
-    name="uploads"
-)
+# 1. Uploaded treatment images
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
-# Admin dashboard files (Accessible at https://lohas.synology.me/admin/)
-if os.path.exists("admin"):
-    app.mount("/admin", StaticFiles(directory="admin", html=True), name="admin")
+# 2. Assets (CSS, JS, images used across the site)
+if ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
-# Public pages (Accessible at https://lohas.synology.me/)
-if os.path.exists("pages"):
-    app.mount("/", StaticFiles(directory="pages", html=True), name="pages")
+# 3. Admin Panel (Accessible at https://lohas.synology.me/admin/)
+if ADMIN_DIR.exists():
+    app.mount("/admin", StaticFiles(directory=str(ADMIN_DIR), html=True), name="admin")
+
+# 4. Pages Folder (Accessible at https://lohas.synology.me/pages/...)
+if PAGES_DIR.exists():
+    app.mount("/pages", StaticFiles(directory=str(PAGES_DIR), html=True), name="pages")
+
+# 5. Root Directory Index/Public Files (Accessible at https://lohas.synology.me/)
+if ROOT_DIR.exists():
+    app.mount("/", StaticFiles(directory=str(ROOT_DIR), html=True), name="root")
 
 
 # --- Entrypoint ---
