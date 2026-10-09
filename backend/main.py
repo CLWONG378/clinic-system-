@@ -2,7 +2,7 @@ import os
 import shutil
 import uuid
 from pathlib import Path
-from fastapi import Body, FastAPI, File, Form, UploadFile
+from fastapi import Body, FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -10,24 +10,17 @@ from pydantic import BaseModel
 
 from database import create_tables, get_connection
 
-app = FastAPI()
+app = FastAPI(title="LOHAS Medical Clinic System")
 
 # --- Setup Directory Paths ---
-# BASE_DIR points to /app/backend
 BASE_DIR = Path(__file__).resolve().parent
-
-# ROOT_DIR points to /app (the outer clinic-system directory in Docker)
 ROOT_DIR = BASE_DIR.parent if BASE_DIR.name == "backend" else BASE_DIR
 
-# Frontend directories in root
 ADMIN_DIR = ROOT_DIR / "admin"
 PAGES_DIR = ROOT_DIR / "pages"
 ASSETS_DIR = ROOT_DIR / "assets"
-
-# Backend uploads directory
 UPLOADS_DIR = BASE_DIR / "uploads"
 
-# Ensure uploads directory exists
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # --- CORS Middleware ---
@@ -37,7 +30,7 @@ app.add_middleware(
         "http://127.0.0.1:5500",
         "http://localhost:5500",
         "https://lohas.synology.me",
-	"https://lohasmedical.synology.me",
+        "https://lohasmedical.synology.me",
         "https://www.lohas.com.hk",
         "http://www.lohas.com.hk",
     ],
@@ -49,7 +42,6 @@ app.add_middleware(
 # Initialize database tables on startup
 create_tables()
 
-
 # --- Pydantic Data Models ---
 
 class Booking(BaseModel):
@@ -60,25 +52,25 @@ class Booking(BaseModel):
     appointment_date: str
     appointment_time: str
 
-
 class PatientPackageCreate(BaseModel):
     patient_id: int
     package_id: int
     purchase_date: str
 
+class PackageConsume(BaseModel):
+    patient_id: int
+    service: str
 
 class TreatmentCreate(BaseModel):
     patient_id: int
     date: str
     notes: str
 
-
 class FollowupCreate(BaseModel):
     patient_id: int
     date: str
     status: str
     notes: str
-
 
 class PatientUpdate(BaseModel):
     name: str
@@ -89,16 +81,14 @@ class PatientUpdate(BaseModel):
     address: str
     notes: str
 
-
 # --- API Endpoints ---
 
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
-    favicon_path = ROOT_DIR / "assets" / "favicon.ico"
+    favicon_path = ASSETS_DIR / "favicon.ico"
     if favicon_path.exists():
         return FileResponse(favicon_path)
     return {"message": "No favicon set"}
-
 
 @app.post("/booking")
 def create_booking(booking: Booking):
@@ -106,10 +96,7 @@ def create_booking(booking: Booking):
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        INSERT INTO patients (name, phone, email)
-        VALUES (?, ?, ?)
-        """,
+        "INSERT INTO patients (name, phone, email) VALUES (?, ?, ?)",
         (booking.name, booking.phone, booking.email)
     )
     patient_id = cursor.lastrowid
@@ -124,16 +111,14 @@ def create_booking(booking: Booking):
 
     conn.commit()
     conn.close()
-
     return {"message": "Booking created successfully"}
-
 
 @app.get("/appointments")
 def get_appointments():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM appointments")
+    cursor.execute("SELECT id, patient_id, service, appointment_date, appointment_time, status FROM appointments")
     rows = cursor.fetchall()
     conn.close()
 
@@ -148,7 +133,6 @@ def get_appointments():
         }
         for row in rows
     ]
-
 
 @app.get("/appointment/{appointment_id}")
 def get_appointment(appointment_id: int):
@@ -177,7 +161,7 @@ def get_appointment(appointment_id: int):
     conn.close()
 
     if row is None:
-        return {"error": "Appointment not found"}
+        raise HTTPException(status_code=404, detail="Appointment not found")
 
     return {
         "id": row[0],
@@ -190,33 +174,26 @@ def get_appointment(appointment_id: int):
         "status": row[7]
     }
 
-
 @app.put("/appointment/{appointment_id}")
 def update_appointment(appointment_id: int, status: str = Body(...)):
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        UPDATE appointments
-        SET status = ?
-        WHERE id = ?
-        """,
+        "UPDATE appointments SET status = ? WHERE id = ?",
         (status, appointment_id)
     )
 
     conn.commit()
     conn.close()
-
     return {"message": "Status updated"}
-
 
 @app.get("/patients")
 def get_patients():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM patients")
+    cursor.execute("SELECT id, name, phone, email FROM patients")
     rows = cursor.fetchall()
     conn.close()
 
@@ -230,21 +207,16 @@ def get_patients():
         for row in rows
     ]
 
-
 @app.get("/patient/{patient_id}")
 def get_patient(patient_id: int):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM patients WHERE id=?", (patient_id,))
+    cursor.execute("SELECT id, name, phone, email, birthday, gender, address, notes FROM patients WHERE id=?", (patient_id,))
     patient = cursor.fetchone()
 
     cursor.execute(
-        """
-        SELECT service, appointment_date, status
-        FROM appointments
-        WHERE patient_id=?
-        """,
+        "SELECT service, appointment_date, status FROM appointments WHERE patient_id=?",
         (patient_id,)
     )
     appointments = cursor.fetchall()
@@ -252,7 +224,7 @@ def get_patient(patient_id: int):
     conn.close()
 
     if patient is None:
-        return {"error": "Patient not found"}
+        raise HTTPException(status_code=404, detail="Patient not found")
 
     return {
         "id": patient[0],
@@ -273,52 +245,32 @@ def get_patient(patient_id: int):
         ]
     }
 
-
-@app.post("/treatment")
-def add_treatment(data: TreatmentCreate):
+@app.put("/patient/{patient_id}")
+def update_patient(patient_id: int, data: PatientUpdate):
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        INSERT INTO treatment_records (patient_id, date, notes)
-        VALUES (?, ?, ?)
+        UPDATE patients
+        SET name=?, phone=?, email=?, birthday=?, gender=?, address=?, notes=?
+        WHERE id=?
         """,
-        (data.patient_id, data.date, data.notes)
+        (
+            data.name,
+            data.phone,
+            data.email,
+            data.birthday,
+            data.gender,
+            data.address,
+            data.notes,
+            patient_id
+        )
     )
 
     conn.commit()
     conn.close()
-
-    return {"message": "Treatment record added"}
-
-
-@app.get("/treatment/{patient_id}")
-def get_treatments(patient_id: int):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT date, notes, image
-        FROM treatment_records
-        WHERE patient_id=?
-        """,
-        (patient_id,)
-    )
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return [
-        {
-            "date": r[0],
-            "notes": r[1],
-            "image": r[2]
-        }
-        for r in rows
-    ]
-
+    return {"message": "Patient updated"}
 
 @app.post("/treatment/upload")
 def upload_treatment(
@@ -330,7 +282,7 @@ def upload_treatment(
 ):
     filename = None
 
-    if image:
+    if image and image.filename:
         filename = f"{uuid.uuid4()}_{image.filename}"
         path = UPLOADS_DIR / filename
 
@@ -350,9 +302,29 @@ def upload_treatment(
 
     conn.commit()
     conn.close()
-
     return {"message": "Treatment uploaded"}
 
+@app.get("/treatment/{patient_id}")
+def get_treatments(patient_id: int):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT date, notes, image FROM treatment_records WHERE patient_id=?",
+        (patient_id,)
+    )
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [
+        {
+            "date": r[0],
+            "notes": r[1],
+            "image": r[2]
+        }
+        for r in rows
+    ]
 
 @app.post("/followup")
 def add_followup(data: FollowupCreate):
@@ -360,18 +332,13 @@ def add_followup(data: FollowupCreate):
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        INSERT INTO followups (patient_id, date, status, notes)
-        VALUES (?, ?, ?, ?)
-        """,
+        "INSERT INTO followups (patient_id, date, status, notes) VALUES (?, ?, ?, ?)",
         (data.patient_id, data.date, data.status, data.notes)
     )
 
     conn.commit()
     conn.close()
-
     return {"message": "Follow-up added"}
-
 
 @app.get("/followup/{patient_id}")
 def get_followups(patient_id: int):
@@ -379,11 +346,7 @@ def get_followups(patient_id: int):
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        SELECT date, status, notes
-        FROM followups
-        WHERE patient_id=?
-        """,
+        "SELECT date, status, notes FROM followups WHERE patient_id=?",
         (patient_id,)
     )
 
@@ -399,7 +362,8 @@ def get_followups(patient_id: int):
         for r in rows
     ]
 
-
+# Multi-route support for Dashboard (supports both /dashboard and /dashboard-data)
+@app.get("/dashboard")
 @app.get("/dashboard-data")
 def dashboard_data():
     conn = get_connection()
@@ -436,42 +400,12 @@ def dashboard_data():
         ]
     }
 
-
-@app.put("/patient/{patient_id}")
-def update_patient(patient_id: int, data: PatientUpdate):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        UPDATE patients
-        SET name=?, phone=?, email=?, birthday=?, gender=?, address=?, notes=?
-        WHERE id=?
-        """,
-        (
-            data.name,
-            data.phone,
-            data.email,
-            data.birthday,
-            data.gender,
-            data.address,
-            data.notes,
-            patient_id
-        )
-    )
-
-    conn.commit()
-    conn.close()
-
-    return {"message": "Patient updated"}
-
-
 @app.get("/packages")
 def get_packages():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM packages")
+    cursor.execute("SELECT id, name, service, sessions, price FROM packages")
     rows = cursor.fetchall()
     conn.close()
 
@@ -486,25 +420,19 @@ def get_packages():
         for r in rows
     ]
 
-
 @app.post("/patient-package")
 def add_patient_package(data: PatientPackageCreate):
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        INSERT INTO patient_packages (patient_id, package_id, purchase_date)
-        VALUES (?, ?, ?)
-        """,
+        "INSERT INTO patient_packages (patient_id, package_id, purchase_date) VALUES (?, ?, ?)",
         (data.patient_id, data.package_id, data.purchase_date)
     )
 
     conn.commit()
     conn.close()
-
     return {"message": "Package assigned"}
-
 
 @app.get("/patient-packages/{patient_id}")
 def get_patient_packages(patient_id: int):
@@ -515,7 +443,7 @@ def get_patient_packages(patient_id: int):
         """
         SELECT
             packages.name,
-            packages.total_sessions,
+            packages.sessions,
             patient_packages.used_sessions,
             patient_packages.status
         FROM patient_packages
@@ -539,9 +467,8 @@ def get_patient_packages(patient_id: int):
         for r in rows
     ]
 
-
 @app.post("/consume-package")
-def consume_package(patient_id: int, service: str):
+def consume_package(data: PackageConsume):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -549,7 +476,7 @@ def consume_package(patient_id: int, service: str):
         """
         SELECT
             patient_packages.id,
-            packages.total_sessions,
+            packages.sessions,
             patient_packages.used_sessions
         FROM patient_packages
         JOIN packages ON packages.id = patient_packages.package_id
@@ -558,55 +485,37 @@ def consume_package(patient_id: int, service: str):
           AND patient_packages.status='Active'
         LIMIT 1
         """,
-        (patient_id, service)
+        (data.patient_id, data.service)
     )
 
     package = cursor.fetchone()
 
     if package:
         cursor.execute(
-            """
-            UPDATE patient_packages
-            SET used_sessions = used_sessions + 1
-            WHERE id=?
-            """,
+            "UPDATE patient_packages SET used_sessions = used_sessions + 1 WHERE id=?",
             (package[0],)
         )
         conn.commit()
 
     conn.close()
-
     return {"message": "consumed"}
-
 
 # --- Static Files & Frontend HTML Mounts ---
 
-# 1. Uploads Directory
 if UPLOADS_DIR.exists():
     app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
-# 2. Shared Assets (CSS, JS, Images)
 if ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
-# 3. Admin Panel Mount (Accessible at /admin/ or /admin/index.html)
 if ADMIN_DIR.exists():
     app.mount("/admin", StaticFiles(directory=str(ADMIN_DIR), html=True), name="admin")
-else:
-    app.mount("/admin", StaticFiles(directory="../admin", html=True), name="admin")
 
-# 4. Pages Folder Mount (Accessible at /pages/...)
 if PAGES_DIR.exists():
     app.mount("/pages", StaticFiles(directory=str(PAGES_DIR), html=True), name="pages")
-else:
-    app.mount("/pages", StaticFiles(directory="../pages", html=True), name="pages")
 
-# 5. Root Directory Catch-All (Serves index.html at root domain https://lohas.synology.me/)
 if ROOT_DIR.exists():
     app.mount("/", StaticFiles(directory=str(ROOT_DIR), html=True), name="root")
-else:
-    app.mount("/", StaticFiles(directory="../", html=True), name="root")
-
 
 # --- Entrypoint ---
 
