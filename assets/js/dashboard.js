@@ -1,117 +1,50 @@
-async function loadDashboard(){
+async function loadDashboard() {
+  try {
+    // Relative path works both locally and via DDNS domain
+    const response = await fetch("/dashboard");
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
-const response =
-await fetch(
-"http://127.0.0.1:8000/dashboard"
-);
+    const data = await response.json();
 
+    document.getElementById("total-patients").textContent = data.patients ?? 0;
+    document.getElementById("total-bookings").textContent = data.bookings ?? 0;
+    document.getElementById("total-treatments").textContent = data.treatments ?? 0;
 
+    const serviceBox = document.getElementById("services");
+    serviceBox.innerHTML = "";
 
-const data =
-await response.json();
+    const serviceNames = {
+      spinal_correction: "脊柱矯正",
+      pain_rehabilitation: "疼痛康復",
+      postpartum_recovery: "產後康復",
+      posture_adjustment: "體態調整",
+      foot_treatment: "足科治療",
+      chinese_orthopedics: "中醫骨科",
+      psychological_consultation: "心理諮詢",
+      nutrition: "營養食療"
+    };
 
+    if (data.services && data.services.length > 0) {
+      let servicesHTML = "";
+      data.services.forEach(item => {
+        const displayName = serviceNames[item.name] || item.name;
+        servicesHTML += `<p><strong>${displayName}</strong>: ${item.count}</p>`;
+      });
+      serviceBox.innerHTML = servicesHTML;
+    } else {
+      serviceBox.innerHTML = "<p>暫無熱門服務數據</p>";
+    }
 
-
-document.getElementById(
-"total-patients"
-).innerHTML =
-data.patients;
-
-
-
-document.getElementById(
-"total-bookings"
-).innerHTML =
-data.bookings;
-
-
-
-document.getElementById(
-"total-treatments"
-).innerHTML =
-data.treatments;
-
-
-
-const serviceBox =
-document.getElementById(
-"services"
-);
-
-
-
-serviceBox.innerHTML="";
-
-
-
-const serviceNames = {
-
-
-    spinal_correction:
-    "脊柱矯正",
-
-
-    pain_rehabilitation:
-    "疼痛康復",
-
-
-    postpartum_recovery:
-    "產后康復",
-
-
-    posture_adjustment:
-    "體態調整",
-
-
-    foot_treatment:
-    "足科治療",
-
-
-    chinese_orthopedics:
-    "中醫骨科",
-
-
-    psychological_consultation:
-    "心理咨詢",
-
-
-    nutrition:
-    "營養食療"
-
-
-};
-
-
-
-data.services.forEach(item=>{
-
-
-serviceBox.innerHTML += `
-
-
-<p>
-
-${serviceNames[item.name] || item.name}
-
-:
-
-${item.count}
-
-</p>
-
-
-`;
-
-
-});
-
-
+  } catch (error) {
+    console.error("Failed to load dashboard data:", error);
+    const serviceBox = document.getElementById("services");
+    if (serviceBox) {
+      serviceBox.innerHTML = "<p style='color:red;'>無法載入數據，請檢查伺服器連線。</p>";
+    }
+  }
 }
 
-
-
-
-
 loadDashboard();
-
