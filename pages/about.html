@@ -4,32 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>關於我們 - 樂活醫療 lohas medical</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Absolute static path for CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
 
     <header>
-        <h1>ABC Clinic</h1>
+        <img src="/assets/images/logo.png" alt="樂活醫療 lohas medical logo">
+
+        <h1 data-key="clinic_name">
+            樂活醫療 lohas medical
+        </h1>
+
+        <p data-key="about_tagline">
+            關於我們 - 專業脊骨神經與康復中心
+        </p>
+
+        <div class="language-switch">
+            <button type="button" onclick="changeLanguage('en')">English</button>
+            <button type="button" onclick="changeLanguage('zh-cn')">简体</button>
+            <button type="button" onclick="changeLanguage('zh-hk')">繁體</button>
+        </div>
     </header>
 
     <nav>
-        <a href="../index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="services.html">Services</a>
-        <a href="contact.html">Contact</a>
-        <a href="booking.html">Book Appointment</a>
+        <a href="/index.html" data-key="home">Home</a>
+        <a href="/pages/about.html" data-key="about">About</a>
+        <a href="/pages/services.html" data-key="services">Services</a>
+        <a href="/pages/contact.html" data-key="contact">Contact</a>
+        <a href="/pages/booking.html" data-key="booking">Book Appointment</a>
     </nav>
 
     <main>
-        <h2>About</h2>
+        <section>
+            <h2 data-key="about_title">關於樂活醫療</h2>
 
-        <p>This page is under construction.</p>
+            <p data-key="about_desc1">
+                樂活醫療致力於提供全方位的健康管理與脊椎康復服務。我們結合現代脊骨神經學、痛症康復與中醫骨科治療，為每一位患者量身定制最適合的治療方案。
+            </p>
+
+            <p data-key="about_desc2">
+                我們的團隊由專業註冊執業醫師組成，擁有豐富的臨床經驗，配備先進的診療設備，旨在幫助您擺脫慢性痛症，恢復最佳身體狀態。
+            </p>
+        </section>
+
+        <section>
+            <h2 data-key="vision_title">我們的理念</h2>
+            <ul>
+                <li data-key="vision_1">以患者為中心，提供精準個人化療程</li>
+                <li data-key="vision_2">結合非手術、無藥物負擔的天然康復療法</li>
+                <li data-key="vision_3">持續跟進患者康復進度，預防復發</li>
+            </ul>
+        </section>
     </main>
 
-    <script src="../assets/js/script.js"></script>
+    <footer>
+        <p>© 2026 樂活醫療 lohas medical. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/assets/js/language.js"></script>
+    <script src="/assets/js/script.js"></script>
 
 </body>
 
