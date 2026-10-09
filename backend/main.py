@@ -570,3 +570,10 @@ if __name__ == "__main__":
     import uvicorn
     # Binds to 0.0.0.0 so Docker can map container port 8000 externally
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
+
+
+if os.path.exists("admin"):
+    app.mount("/", StaticFiles(directory="admin", html=True), name="static")
+
+if os.path.exists("pages"):
+    app.mount("/", StaticFiles(directory="pages", html=True), name="static")
