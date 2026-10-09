@@ -4,282 +4,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>樂活醫療 lohas medical</title>
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Root-absolute path for CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
 
-<header>
-
-    <img src="assets/images/logo.png" alt="樂活醫療 lohas medical logo">
-
-    <h1 data-key="clinic_name">
-        樂活醫療 lohas medical
-    </h1>
-
-    <p data-key="tagline">
-        Professional Chiropractic Clinic
-    </p>
-
-    <div class="language-switch">
-
-        <button onclick="changeLanguage('en')">
-            English
-        </button>
-
-        <button onclick="changeLanguage('zh-cn')">
-            简体
-        </button>
-
-        <button onclick="changeLanguage('zh-hk')">
-            繁體
-        </button>
-
-    </div>
-
-</header>
-
-
-<nav>
-
-    <a href="index.html" data-key="home">
-        Home
-    </a>
-
-    <a href="pages/about.html" data-key="about">
-        About
-    </a>
-
-    <a href="pages/services.html" data-key="services">
-        Services
-    </a>
-
-    <a href="pages/contact.html" data-key="contact">
-        Contact
-    </a>
-
-    <a href="pages/booking.html" data-key="booking">
-        Book Appointment
-    </a>
-
-</nav>
-
-
-    <main>
-
-        <section id="hero">
-
-            <h2>Helping You Move Better</h2>
-
-            <p>
-                Professional chiropractic care for you and your family.
-            </p>
-
-            <button>
-                Book Appointment
-            </button>
-
-        </section>
-
-
-        <section id="why-us">
-
-            <h2>Why Choose 樂活醫療 lohas medical?</h2>
-
-            <ul>
-                <li>Experienced Chiropractors</li>
-                <li>Personalized Treatment Plans</li>
-                <li>Modern Equipment</li>
-                <li>Comfortable Environment</li>
-            </ul>
-
-        </section>
-
-
-<section id="services-preview">
-
-    <h2 data-key="services_title">
-        Our Services
-    </h2>
-
-
-    <div class="service-list">
-
-        <div class="service-card">
-            <h3 data-key="pain_rehabilitation">
-                Pain Rehabilitation
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="spinal_correction">
-                Spinal Correction
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="postpartum_recovery">
-                Postpartum Recovery
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="chinese_orthopedics">
-                Chinese Orthopedics
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="foot_treatment">
-                Foot Treatment
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="posture_adjustment">
-                Posture Adjustment
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="psychological_consultation">
-                Psychological Consultation
-            </h3>
-        </div>
-
-
-        <div class="service-card">
-            <h3 data-key="nutrition">
-                Nutrition Therapy
-            </h3>
-        </div>
-
-
-    </div>
-
-<section id="online-consultation">
-
-    <h2 data-key="online_consultation">
-        Online Consultation
-    </h2>
-
-
-    <div class="consultation-steps">
-
-
-        <div class="step">
-            <span>1</span>
-            <p data-key="step1">
-                Book Appointment Time
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>2</span>
-            <p data-key="step2">
-                Make Payment
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>3</span>
-            <p data-key="step3">
-                Attend Online Consultation
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>4</span>
-            <p data-key="step4">
-                Medical Consultation
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>5</span>
-            <p data-key="step5">
-                Rehabilitation Exercise Guidance
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>6</span>
-            <p data-key="step6">
-                Online Assessment
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>7</span>
-            <p data-key="step7">
-                Professional Evaluation
-            </p>
-        </div>
-
-
-        <div class="step">
-            <span>8</span>
-            <p data-key="step8">
-                Create Recovery Plan
-            </p>
-        </div>
-
-
-    </div>
-
-</section>
-
-
-        <section id="opening-hours">
-
-            <h2>Opening Hours</h2>
-
-            <p>Monday - Friday</p>
-            <p>Saturday</p>
-            <p>Sunday</p>
-
-        </section>
-
-
-        <section id="contact">
-
-            <h2>Contact Us</h2>
-
-            <p>Clinic Address</p>
-            <p>Phone Number</p>
-            <p>Email Address</p>
-
-        </section>
-
-
-    </main>
-
-
-    <footer>
-
-        <p>
-            © 2026 樂活醫療 lohas medical. All rights reserved.
+    <header>
+        <img src="/assets/images/logo.png" alt="樂活醫療 lohas medical logo">
+
+        <h1 data-key="clinic_name">
+            樂活醫療 lohas medical
+        </h1>
+
+        <p data-key="tagline">
+            Professional Chiropractic Clinic
         </p>
 
+        <div class="language-switch">
+            <button type="button" onclick="changeLanguage('en')">English</button>
+            <button type="button" onclick="changeLanguage('zh-cn')">简体</button>
+            <button type="button" onclick="changeLanguage('zh-hk')">繁體</button>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/index.html" data-key="home">Home</a>
+        <a href="/pages/about.html" data-key="about">About</a>
+        <a href="/pages/services.html" data-key="services">Services</a>
+        <a href="/pages/contact.html" data-key="contact">Contact</a>
+        <a href="/pages/booking.html" data-key="booking">Book Appointment</a>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero">
+            <h2 data-key="hero_title">Helping You Move Better</h2>
+            <p data-key="hero_subtitle">
+                Professional chiropractic care for you and your family.
+            </p>
+            <button type="button" onclick="window.location.href='/pages/booking.html'" data-key="booking_btn">
+                Book Appointment
+            </button>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section id="why-us">
+            <h2 data-key="why_us_title">Why Choose 樂活醫療 lohas medical?</h2>
+            <ul>
+                <li data-key="why_us_1">Experienced Chiropractors</li>
+                <li data-key="why_us_2">Personalized Treatment Plans</li>
+                <li data-key="why_us_3">Modern Equipment</li>
+                <li data-key="why_us_4">Comfortable Environment</li>
+            </ul>
+        </section>
+
+        <!-- Services Preview Section -->
+        <section id="services-preview">
+            <h2 data-key="services_title">Our Services</h2>
+
+            <div class="service-list">
+                <div class="service-card">
+                    <h3 data-key="pain_rehabilitation">Pain Rehabilitation</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="spinal_correction">Spinal Correction</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="postpartum_recovery">Postpartum Recovery</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="chinese_orthopedics">Chinese Orthopedics</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="foot_treatment">Foot Treatment</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="posture_adjustment">Posture Adjustment</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="psychological_consultation">Psychological Consultation</h3>
+                </div>
+                <div class="service-card">
+                    <h3 data-key="nutrition">Nutrition Therapy</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Online Consultation Steps -->
+        <section id="online-consultation">
+            <h2 data-key="online_consultation">Online Consultation</h2>
+
+            <div class="consultation-steps">
+                <div class="step">
+                    <span>1</span>
+                    <p data-key="step1">Book Appointment Time</p>
+                </div>
+                <div class="step">
+                    <span>2</span>
+                    <p data-key="step2">Make Payment</p>
+                </div>
+                <div class="step">
+                    <span>3</span>
+                    <p data-key="step3">Attend Online Consultation</p>
+                </div>
+                <div class="step">
+                    <span>4</span>
+                    <p data-key="step4">Medical Consultation</p>
+                </div>
+                <div class="step">
+                    <span>5</span>
+                    <p data-key="step5">Rehabilitation Exercise Guidance</p>
+                </div>
+                <div class="step">
+                    <span>6</span>
+                    <p data-key="step6">Online Assessment</p>
+                </div>
+                <div class="step">
+                    <span>7</span>
+                    <p data-key="step7">Professional Evaluation</p>
+                </div>
+                <div class="step">
+                    <span>8</span>
+                    <p data-key="step8">Create Recovery Plan</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opening Hours -->
+        <section id="opening-hours">
+            <h2 data-key="hours_title">Opening Hours</h2>
+            <p data-key="weekday_hours">Monday - Friday: 09:00 - 19:00</p>
+            <p data-key="saturday_hours">Saturday: 09:00 - 17:00</p>
+            <p data-key="sunday_hours">Sunday & Public Holidays: Closed</p>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2 data-key="contact_title">Contact Us</h2>
+            <p data-key="address_text">Clinic Address: Hong Kong, Kowloon</p>
+            <p data-key="phone_text">Phone Number: +852 1234 5678</p>
+            <p data-key="email_text">Email: info@lohasmedical.com</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 樂活醫療 lohas medical. All rights reserved.</p>
     </footer>
 
-
-    <script src="assets/js/script.js"></script>
+    <!-- Scripts -->
+    <script src="/assets/js/language.js"></script>
+    <script src="/assets/js/script.js"></script>
 
 </body>
 
