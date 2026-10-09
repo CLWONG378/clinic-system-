@@ -10,15 +10,7 @@ from database import create_tables, get_connection
 
 app = FastAPI()
 
-# Mount uploads directory for static files
-app.mount(
-    "/uploads",
-    StaticFiles(directory=os.getenv("UPLOADS_PATH", "uploads")),
-    name="uploads"
-)
-
-# Configured CORS middleware to allow requests from local dev environments,
-# Synology DDNS, and your Strikingly production domain.
+# --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -78,11 +70,6 @@ class PatientUpdate(BaseModel):
 
 
 # --- API Endpoints ---
-
-@app.get("/")
-def home():
-    return {"message": "LOHAS Medical Server Running"}
-
 
 @app.post("/booking")
 def create_booking(booking: Booking):
@@ -385,8 +372,8 @@ def get_followups(patient_id: int):
     ]
 
 
-@app.get("/dashboard")
-def dashboard():
+@app.get("/dashboard-data")
+def dashboard_data():
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -564,16 +551,26 @@ def consume_package(patient_id: int, service: str):
     return {"message": "consumed"}
 
 
-# --- Entrypoint for Running with Docker / Direct Execution ---
+# --- Static Files & Frontend HTML Mounts ---
+
+# Uploaded images
+app.mount(
+    "/uploads",
+    StaticFiles(directory=os.getenv("UPLOADS_PATH", "uploads")),
+    name="uploads"
+)
+
+# Admin dashboard files (Accessible at https://lohas.synology.me/admin/)
+if os.path.exists("admin"):
+    app.mount("/admin", StaticFiles(directory="admin", html=True), name="admin")
+
+# Public pages (Accessible at https://lohas.synology.me/)
+if os.path.exists("pages"):
+    app.mount("/", StaticFiles(directory="pages", html=True), name="pages")
+
+
+# --- Entrypoint ---
 
 if __name__ == "__main__":
     import uvicorn
-    # Binds to 0.0.0.0 so Docker can map container port 8000 externally
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
-
-
-if os.path.exists("admin"):
-    app.mount("/", StaticFiles(directory="admin", html=True), name="static")
-
-if os.path.exists("pages"):
-    app.mount("/", StaticFiles(directory="pages", html=True), name="static")
