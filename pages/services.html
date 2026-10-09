@@ -4,32 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services</title>
+    <title>服務項目 - 樂活醫療 lohas medical</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Absolute static path for CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
 
     <header>
-        <h1>ABC Clinic</h1>
+        <img src="/assets/images/logo.png" alt="樂活醫療 lohas medical logo">
+
+        <h1 data-key="clinic_name">
+            樂活醫療 lohas medical
+        </h1>
+
+        <p data-key="tagline">
+            以愛為本 用心服務
+        </p>
+
+        <div class="language-switch">
+            <button type="button" onclick="changeLanguage('en')">English</button>
+            <button type="button" onclick="changeLanguage('zh-cn')">简体</button>
+            <button type="button" onclick="changeLanguage('zh-hk')">繁體</button>
+        </div>
     </header>
 
     <nav>
-        <a href="../index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="services.html">Services</a>
-        <a href="contact.html">Contact</a>
-        <a href="booking.html">Book Appointment</a>
+        <a href="/index.html" data-key="home">Home</a>
+        <a href="/pages/about.html" data-key="about">About</a>
+        <a href="/pages/services.html" data-key="services">Services</a>
+        <a href="/pages/contact.html" data-key="contact">Contact</a>
+        <a href="/pages/booking.html" data-key="booking">Book Appointment</a>
     </nav>
 
     <main>
-        <h2>Services</h2>
+        <section>
+            <h2 data-key="services_title">我們的專業服務</h2>
 
-        <p>This page is under construction.</p>
+            <div class="service-list">
+                <div class="service-card">
+                    <h3 data-key="pain_rehabilitation">疼痛康復</h3>
+                    <p data-key="pain_rehab_desc">針對坐骨神經痛、肩頸僵硬、腰背痛等慢性痛症進行深層治療與物理復健。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="spinal_correction">脊柱矯正</h3>
+                    <p data-key="spinal_desc">採用專業脊骨神經手法，調整錯位脊椎，恢復神經系統傳導與體態平衡。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="postpartum_recovery">產後康復</h3>
+                    <p data-key="postpartum_desc">專為產後媽媽設計的骨盆修復、腹直肌分離修復及全身調理方案。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="chinese_orthopedics">中醫骨科</h3>
+                    <p data-key="orthopedics_desc">結合傳統跌打正骨、針灸與中藥舒筋活血，加速關節與肌肉損傷復原。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="foot_treatment">足科治療</h3>
+                    <p data-key="foot_desc">針對扁平足、足底筋膜炎進行體態足部力學評估與訂製矯形腳墊。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="posture_adjustment">體態調整</h3>
+                    <p data-key="posture_desc">改善高低肩、駝背、頭前傾等不良姿勢，重塑健康挺拔體態。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="psychological_consultation">心理諮詢</h3>
+                    <p data-key="psych_desc">提供專業身心健康輔導，舒緩壓力與焦慮，促進整體身心平衡。</p>
+                </div>
+
+                <div class="service-card">
+                    <h3 data-key="nutrition">營養食療</h3>
+                    <p data-key="nutrition_desc">量身定制抗發炎與身體修復飲食計劃，由內而外提升免疫力。</p>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <script src="../assets/js/script.js"></script>
+    <footer>
+        <p>© 2026 樂活醫療 lohas medical. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/assets/js/language.js"></script>
+    <script src="/assets/js/script.js"></script>
 
 </body>
 
