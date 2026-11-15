@@ -43,8 +43,10 @@
             <h2 data-key="booking_title">預約診症</h2>
 
             <form id="booking-form">
+                <!-- 1. Choose Service -->
                 <h3 data-key="choose_service">選擇服務</h3>
                 <select id="service" required>
+                    <option value="" disabled selected data-key="select_service_placeholder">請選擇服務</option>
                     <option value="pain_rehabilitation" data-key="pain_rehabilitation">疼痛康復</option>
                     <option value="spinal_correction" data-key="spinal_correction">脊柱矯正</option>
                     <option value="postpartum_recovery" data-key="postpartum_recovery">產後康復</option>
@@ -53,14 +55,42 @@
                     <option value="chinese_orthopedics" data-key="chinese_orthopedics">中醫骨科</option>
                 </select>
 
+                <!-- 2. Choose Doctor by Side-by-Side Image Buttons -->
+                <h3 data-key="choose_doctor">選擇醫生</h3>
+                <input type="hidden" id="selected-doctor" name="doctor" required>
+
+                <div class="doctor-grid">
+                    <button type="button" class="doctor-card-btn" data-doctor-id="wong_yat_tak" onclick="selectDoctor('wong_yat_tak', this)">
+                        <img src="/assets/images/WongYatTak.png" alt="王溢德 醫師" class="doctor-photo">
+                        <div class="doctor-info">
+                            <h4 class="doctor-name" data-key="doctor_tak_name">王溢德 醫師</h4>
+                            <p class="doctor-title" data-key="doctor_tak_title">Wong Yat Tak</p>
+                        </div>
+                    </button>
+
+                    <button type="button" class="doctor-card-btn" data-doctor-id="wong_yat_ki" onclick="selectDoctor('wong_yat_ki', this)">
+                        <img src="/assets/images/WongYatKi.png" alt="王溢琪 醫師" class="doctor-photo">
+                        <div class="doctor-info">
+                            <h4 class="doctor-name" data-key="doctor_ki_name">王溢琪 醫師</h4>
+                            <p class="doctor-title" data-key="doctor_ki_title">Wong Yat Ki</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- 3. Choose Date & Time Buttons (30-min intervals) -->
                 <h3 data-key="choose_datetime">選擇預約時間</h3>
 
                 <label for="appointment-date" data-key="appointment_date">預約日期</label>
                 <input id="appointment-date" type="date" required>
 
-                <label for="appointment-time" data-key="appointment_time">預約時間</label>
-                <input id="appointment-time" type="time" required>
+                <label data-key="appointment_time_label">選擇時段 (30分鐘一節)</label>
+                <input type="hidden" id="appointment-time" name="appointment_time" required>
 
+                <div id="time-slots-container" class="time-slots-grid">
+                    <!-- JavaScript populates 30-min buttons here -->
+                </div>
+
+                <!-- 4. Patient Information -->
                 <h3 data-key="patient_information">客戶資料</h3>
 
                 <label for="name" data-key="name">姓名</label>
@@ -78,7 +108,7 @@
     </main>
 
     <footer>
-        <p>© 2026 樂活醫療 lohas medical. All rights reserved.</p>
+        <p>&copy; 2026 樂活醫療 lohas medical. All rights reserved.</p>
     </footer>
 
     <!-- Scripts -->

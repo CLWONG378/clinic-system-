@@ -133,9 +133,108 @@ form textarea,
     margin-bottom: 10px;
 }
 
-form button {
+form button[type="submit"] {
     margin-top: 25px;
     width: 200px;
+}
+
+/* ===== Doctor Selection Side-by-Side Grid ===== */
+.doctor-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+    margin-bottom: 25px;
+}
+
+/* Doctor Button Styles */
+.doctor-card-btn {
+    flex: 1;
+    max-width: 240px;
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.doctor-card-btn:hover {
+    border-color: #7AC943;
+    background-color: #f7fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.doctor-card-btn.selected {
+    border-color: #4FC3F7;
+    background-color: #e6f7ff;
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+}
+
+.doctor-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #cbd5e0;
+}
+
+.doctor-card-btn.selected .doctor-photo {
+    border-color: #4FC3F7;
+}
+
+.doctor-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 4px 0 2px 0;
+    color: #2d3748;
+}
+
+.doctor-title {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 0;
+}
+
+/* ===== 30-Minute Time Slot Grid ===== */
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+    margin: 10px 0 20px 0;
+}
+
+.time-slot-btn {
+    padding: 10px 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background-color: #f7fafc;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-slot-btn:hover {
+    background-color: #edf2f7;
+    border-color: #a0aec0;
+}
+
+.time-slot-btn.selected {
+    background-color: #4FC3F7;
+    color: #ffffff;
+    border-color: #4FC3F7;
+    font-weight: bold;
 }
 
 /* ===== Services & Consultation ===== */
@@ -278,7 +377,24 @@ footer {
         padding: 20px;
     }
 
-    form button {
+    form button[type="submit"] {
         width: 100%;
+    }
+
+    .doctor-grid {
+        gap: 10px;
+    }
+
+    .doctor-card-btn {
+        padding: 12px 8px;
+    }
+
+    .doctor-photo {
+        width: 75px;
+        height: 75px;
+    }
+
+    .doctor-name {
+        font-size: 0.95rem;
     }
 }
