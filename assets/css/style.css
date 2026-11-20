@@ -398,3 +398,40 @@ footer {
         font-size: 0.95rem;
     }
 }
+
+/* Larger Date Input Box */
+#appointment-date {
+    font-size: 1.15rem;
+    padding: 14px 16px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    letter-spacing: 0.5px;
+}
+
+/* Bigger Popup Calendar */
+.flatpickr-calendar {
+    transform: scale(1.18);
+    transform-origin: top left;
+    margin-top: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+}
+
+/* Prevent calendar from overflowing screen on small mobile devices */
+@media (max-width: 480px) {
+    .flatpickr-calendar {
+        transform: scale(1.05);
+    }
+}
+
+.time-slot-btn:disabled,
+.time-slot-btn.booked {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration: line-through;
+}

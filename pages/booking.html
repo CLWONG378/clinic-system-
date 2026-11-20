@@ -8,6 +8,8 @@
 
     <!-- Absolute static path for CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Flatpickr Calendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
@@ -81,7 +83,9 @@
                 <h3 data-key="choose_datetime">選擇預約時間</h3>
 
                 <label for="appointment-date" data-key="appointment_date">預約日期</label>
-                <input id="appointment-date" type="date" required>
+                <div class="date-input-wrapper">
+                    <input id="appointment-date" type="text" inputmode="numeric" placeholder="YYYY-MM-DD (點擊選擇或直接輸入)" required>
+                </div>
 
                 <label data-key="appointment_time_label">選擇時段 (30分鐘一節)</label>
                 <input type="hidden" id="appointment-time" name="appointment_time" required>
@@ -112,9 +116,32 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="/assets/js/language.js"></script>
     <script src="/assets/js/script.js"></script>
     <script src="/assets/js/booking.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dateInput = document.getElementById("appointment-date");
+
+            flatpickr(dateInput, {
+                dateFormat: "Y-m-d",     // Standard format (e.g., 2026-11-20)
+                allowInput: true,        // Lets users type numbers directly
+                minDate: "today",        // Prevents booking past dates
+                disable: [
+                    function(date) {
+                        // Optional: disable Sundays (0) since clinic is closed
+                        return (date.getDay() === 0);
+                    }
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    // Ensures booking.js detects the change to load time slots
+                    dateInput.dispatchEvent(new Event("change"));
+                }
+            });
+        });
+    </script>
 
 </body>
 

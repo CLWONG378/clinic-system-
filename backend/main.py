@@ -1,7 +1,10 @@
+```python
 import os
 import shutil
+import sqlite3
 import uuid
 from pathlib import Path
+from typing import Optional
 from fastapi import Body, FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -42,13 +45,38 @@ app.add_middleware(
 # Initialize database tables on startup
 create_tables()
 
+
+def ensure_doctor_and_unique_slot():
+    """Safely adds the 'doctor' column and unique active-slot index if not present."""
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("PRAGMA table_info(appointments)")
+    columns = [col[1] for col in cursor.fetchall()]
+    if "doctor" not in columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN doctor TEXT DEFAULT ''")
+
+    # Prevent duplicate non-cancelled bookings for the same doctor, date, and time
+    cursor.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS uq_active_appointment_slot
+        ON appointments (doctor, appointment_date, appointment_time)
+        WHERE COALESCE(status, 'Pending') NOT IN ('Cancelled', 'cancelled')
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+ensure_doctor_and_unique_slot()
+
 # --- Pydantic Data Models ---
 
 class Booking(BaseModel):
     name: str
     phone: str
-    email: str
+    email: Optional[str] = ""
     service: str
+    doctor: str
     appointment_date: str
     appointment_time: str
 
@@ -90,35 +118,84 @@ def favicon():
         return FileResponse(favicon_path)
     return {"message": "No favicon set"}
 
+@app.get("/booked-slots")
+def get_booked_slots(doctor: str, appointment_date: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT appointment_time
+        FROM appointments
+        WHERE doctor = ?
+          AND appointment_date = ?
+          AND COALESCE(status, 'Pending') NOT IN ('Cancelled', 'cancelled')
+        """,
+        (doctor, appointment_date)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    return {"booked_times": [row[0] for row in rows]}
+
 @app.post("/booking")
 def create_booking(booking: Booking):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO patients (name, phone, email) VALUES (?, ?, ?)",
-        (booking.name, booking.phone, booking.email)
-    )
-    patient_id = cursor.lastrowid
+    try:
+        # 1. Check if this doctor + date + time is already booked
+        cursor.execute(
+            """
+            SELECT id FROM appointments
+            WHERE doctor = ?
+              AND appointment_date = ?
+              AND appointment_time = ?
+              AND COALESCE(status, 'Pending') NOT IN ('Cancelled', 'cancelled')
+            """,
+            (booking.doctor, booking.appointment_date, booking.appointment_time)
+        )
+        if cursor.fetchone():
+            raise HTTPException(
+                status_code=409,
+                detail="此時段已被預約 (This time slot is already booked)"
+            )
 
-    cursor.execute(
-        """
-        INSERT INTO appointments (patient_id, service, appointment_date, appointment_time)
-        VALUES (?, ?, ?, ?)
-        """,
-        (patient_id, booking.service, booking.appointment_date, booking.appointment_time)
-    )
+        # 2. Insert patient & appointment atomically
+        cursor.execute(
+            "INSERT INTO patients (name, phone, email) VALUES (?, ?, ?)",
+            (booking.name, booking.phone, booking.email or "")
+        )
+        patient_id = cursor.lastrowid
 
-    conn.commit()
-    conn.close()
-    return {"message": "Booking created successfully"}
+        cursor.execute(
+            """
+            INSERT INTO appointments (patient_id, service, doctor, appointment_date, appointment_time)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (patient_id, booking.service, booking.doctor, booking.appointment_date, booking.appointment_time)
+        )
+
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="此時段剛剛已被預約 (This time slot was just booked)"
+        )
+    finally:
+        conn.close()
+
+    return {"message": "預約成功！ (Booking created successfully)"}
 
 @app.get("/appointments")
 def get_appointments():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, patient_id, service, appointment_date, appointment_time, status FROM appointments")
+    cursor.execute(
+        "SELECT id, patient_id, service, doctor, appointment_date, appointment_time, status FROM appointments"
+    )
     rows = cursor.fetchall()
     conn.close()
 
@@ -127,9 +204,10 @@ def get_appointments():
             "id": row[0],
             "patient_id": row[1],
             "service": row[2],
-            "appointment_date": row[3],
-            "appointment_time": row[4],
-            "status": row[5]
+            "doctor": row[3],
+            "appointment_date": row[4],
+            "appointment_time": row[5],
+            "status": row[6]
         }
         for row in rows
     ]
@@ -147,6 +225,7 @@ def get_appointment(appointment_id: int):
             patients.phone,
             patients.email,
             appointments.service,
+            appointments.doctor,
             appointments.appointment_date,
             appointments.appointment_time,
             appointments.status
@@ -169,9 +248,10 @@ def get_appointment(appointment_id: int):
         "phone": row[2],
         "email": row[3],
         "service": row[4],
-        "date": row[5],
-        "time": row[6],
-        "status": row[7]
+        "doctor": row[5],
+        "date": row[6],
+        "time": row[7],
+        "status": row[8]
     }
 
 @app.put("/appointment/{appointment_id}")
@@ -216,7 +296,7 @@ def get_patient(patient_id: int):
     patient = cursor.fetchone()
 
     cursor.execute(
-        "SELECT service, appointment_date, status FROM appointments WHERE patient_id=?",
+        "SELECT service, doctor, appointment_date, status FROM appointments WHERE patient_id=?",
         (patient_id,)
     )
     appointments = cursor.fetchall()
@@ -238,8 +318,9 @@ def get_patient(patient_id: int):
         "appointments": [
             {
                 "service": a[0],
-                "date": a[1],
-                "status": a[2]
+                "doctor": a[1],
+                "date": a[2],
+                "status": a[3]
             }
             for a in appointments
         ]
@@ -522,3 +603,5 @@ if ROOT_DIR.exists():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
+
+```
