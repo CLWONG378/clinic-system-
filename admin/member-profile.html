@@ -14,13 +14,20 @@
 
   <header>
     <h1>樂活醫療 lohas medical</h1>
-    <p>360度會員視圖</p>
+    <p>360度會員視圖 (Digital Member & Progress Profile)</p>
   </header>
+
+  <nav>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/calendar.html">Calendar</a>
+    <a href="/admin/patients.html">Members</a>
+    <a href="/pages/booking.html">Public Booking</a>
+  </nav>
 
   <main>
     <!-- Section 1: Profile Details -->
     <section>
-      <h2>會員資料</h2>
+      <h2>會員資料 <span id="member-code-badge" style="font-size: 0.9rem; font-weight: normal; color: #2b7a78;"></span></h2>
       <div id="profile">
         <label for="profile-name">姓名</label>
         <input id="profile-name">
@@ -44,6 +51,9 @@
         <label for="profile-address">地址</label>
         <input id="profile-address">
 
+        <label for="profile-medical-history">病史 / 過敏 / 注意事項</label>
+        <textarea id="profile-medical-history" placeholder="過敏史、舊患、禁忌等"></textarea>
+
         <label for="profile-notes">備註</label>
         <textarea id="profile-notes"></textarea>
 
@@ -57,18 +67,35 @@
       <div id="history">Loading...</div>
     </section>
 
-    <!-- Section 3: Customer Follow-ups -->
+    <!-- Section 3: Customer Follow-ups & Recovery Progress -->
     <section>
-      <h2>客戶回訪</h2>
+      <h2>客戶回訪與進度跟進</h2>
       <div id="followups">Loading...</div>
 
       <h3>新增回訪</h3>
+      <label for="followup-date">回訪日期</label>
       <input id="followup-date" type="date">
+
+      <label for="followup-next-date">下次跟進日期</label>
+      <input id="followup-next-date" type="date">
+
+      <label for="followup-status">聯絡狀態</label>
       <select id="followup-status">
         <option value="已聯絡">已聯絡</option>
         <option value="未接通">未接通</option>
         <option value="需要跟進">需要跟進</option>
       </select>
+
+      <label for="followup-progress">康復進度評級</label>
+      <select id="followup-progress">
+        <option value="">請選擇</option>
+        <option value="明顯好轉 (Much Improved)">明顯好轉 (Much Improved)</option>
+        <option value="穩定改善 (Steadily Improving)">穩定改善 (Steadily Improving)</option>
+        <option value="維持中 (Stable)">維持中 (Stable)</option>
+        <option value="需調整方案 (Needs Adjustment)">需調整方案 (Needs Adjustment)</option>
+      </select>
+
+      <label for="followup-notes">回訪內容</label>
       <textarea id="followup-notes" placeholder="回訪內容"></textarea>
       <button id="add-followup" type="button">新增回訪</button>
     </section>
@@ -79,25 +106,51 @@
       <div id="packages">Loading...</div>
 
       <h3>購買新套餐</h3>
+      <label for="package-select">選擇套餐</label>
       <select id="package-select"></select>
+
+      <label for="package-expiry">有效期限（選填）</label>
+      <input id="package-expiry" type="date">
+
       <button id="buy-package" type="button">購買套餐</button>
     </section>
 
-    <!-- Section 5: Treatments -->
+    <!-- Section 5: Treatments & Progress -->
     <section>
       <h2>服務記錄</h2>
       <div id="treatments">Loading...</div>
 
       <h3>新增服務記錄</h3>
+      <label for="treatment-service">服務項目</label>
       <select id="treatment-service">
-        <option value="spinal_correction">脊柱矯正</option>
-        <option value="pain_rehabilitation">疼痛康復</option>
-        <option value="posture_adjustment">體態調整</option>
-        <option value="foot_treatment">足科治療</option>
+        <option value="spinal_correction">脊柱矯正 (Spinal Correction)</option>
+        <option value="pain_rehabilitation">疼痛康復 (Pain Rehabilitation)</option>
+        <option value="postpartum_recovery">產後康復 (Postpartum Recovery)</option>
+        <option value="posture_adjustment">體態調整 (Posture Adjustment)</option>
+        <option value="foot_treatment">足科治療 (Foot Treatment)</option>
+        <option value="chinese_orthopedics">中醫骨科 (Chinese Orthopedics)</option>
+        <option value="psychological_consultation">心理諮詢 (Psychological Consultation)</option>
+        <option value="nutrition">營養食療 (Nutrition)</option>
+        <option value="online_consultation">網上診症 (Online Consultation)</option>
       </select>
 
+      <label for="treatment-doctor">負責醫師</label>
+      <select id="treatment-doctor">
+        <option value="">未指定</option>
+        <option value="wong_yat_tak">王溢德 醫師 (Dr. Wong Yat Tak)</option>
+        <option value="wong_yat_ki">王溢琪 醫師 (Dr. Wong Yat Ki)</option>
+      </select>
+
+      <label for="treatment-pain-score">痛楚 / 不適指數 (0-10，0為無痛)</label>
+      <input id="treatment-pain-score" type="number" min="0" max="10" placeholder="例如: 3">
+
+      <label for="treatment-date">服務日期</label>
       <input id="treatment-date" type="date">
+
+      <label for="treatment-notes">服務記錄</label>
       <textarea id="treatment-notes" placeholder="輸入服務記錄"></textarea>
+
+      <label for="treatment-image">附件 / 照片</label>
       <input id="treatment-image" type="file">
 
       <button id="add-treatment" type="button">新增記錄</button>

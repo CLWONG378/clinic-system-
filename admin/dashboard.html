@@ -17,27 +17,47 @@
     <p>營運數據分析</p>
   </header>
 
+  <nav>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/calendar.html">Calendar</a>
+    <a href="/admin/patients.html">Members</a>
+    <a href="/pages/booking.html">Public Booking</a>
+  </nav>
+
   <main>
-    <h2>Clinic Dashboard</h2>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px;">
+      <h2 style="margin: 0;">Clinic Dashboard</h2>
+      <button id="refresh-dashboard" type="button">重新整理 (Refresh)</button>
+    </div>
 
     <div class="dashboard">
       <div class="dashboard-card">
-        <h3>會員總數</h3>
+        <h3>會員總數 (Members)</h3>
         <p id="total-patients">0</p>
       </div>
 
       <div class="dashboard-card">
-        <h3>預約總數</h3>
+        <h3>有效預約 (Active Bookings)</h3>
         <p id="total-bookings">0</p>
       </div>
 
       <div class="dashboard-card">
-        <h3>服務記錄</h3>
+        <h3>服務記錄 (Treatments)</h3>
         <p id="total-treatments">0</p>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>跟進記錄 (Follow-ups)</h3>
+        <p id="total-followups">0</p>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>已收款項 (Paid HKD)</h3>
+        <p id="total-paid-hkd">HK$0</p>
       </div>
     </div>
 
-    <h2>熱門服務</h2>
+    <h2>熱門服務 (Popular Services)</h2>
 
     <div id="services">Loading...</div>
   </main>

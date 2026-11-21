@@ -18,21 +18,52 @@
     <p>Admin Calendar</p>
   </header>
 
+  <nav>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/calendar.html">Calendar</a>
+    <a href="/admin/patients.html">Members</a>
+    <a href="/pages/booking.html">Public Booking</a>
+  </nav>
+
   <main>
-    <h2>Appointment Calendar</h2>
+    <div class="calendar-toolbar" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+      <h2 style="margin: 0;">Appointment Calendar</h2>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <label for="doctor-filter"><strong>Doctor:</strong></label>
+        <select id="doctor-filter">
+          <option value="">All Doctors (全部醫師)</option>
+          <option value="wong_yat_tak">Dr. Wong Yat Tak (王溢德 醫師)</option>
+          <option value="wong_yat_ki">Dr. Wong Yat Ki (王溢琪 醫師)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Status Color Legend -->
+    <div class="calendar-legend" style="display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; font-size: 0.9rem;">
+      <span><strong style="color: #f59e0b;">●</strong> Pending (待確認)</span>
+      <span><strong style="color: #10b981;">●</strong> Confirmed / Paid (已確認)</span>
+      <span><strong style="color: #3b82f6;">●</strong> Completed (已完成)</span>
+      <span><strong style="color: #9ca3af;">●</strong> Cancelled (已取消)</span>
+    </div>
 
     <div id="calendar"></div>
 
+    <!-- Appointment Details Modal -->
     <div id="appointment-modal" class="modal" style="display: none;">
       <div class="modal-content">
         <h2>Appointment Details</h2>
 
+        <p id="member-code"></p>
         <p id="patient-name"></p>
         <p id="patient-phone"></p>
         <p id="patient-email"></p>
+        <p id="appointment-doctor"></p>
         <p id="appointment-service"></p>
         <p id="appointment-date"></p>
         <p id="appointment-time"></p>
+        <p id="appointment-payment"></p>
+        <p id="appointment-notes"></p>
 
         <label for="appointment-status">Status</label>
         <select id="appointment-status">
@@ -42,8 +73,11 @@
           <option value="Cancelled">Cancelled</option>
         </select>
 
-        <button id="save-status" type="button">Save</button>
-        <button id="close-modal" type="button">Close</button>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;">
+          <button id="save-status" type="button">Save Status</button>
+          <a id="open-member-profile" href="#" class="btn-link" style="padding: 10px 14px; background: #2b7a78; color: #fff; text-decoration: none; border-radius: 6px;">Open Member Profile</a>
+          <button id="close-modal" type="button">Close</button>
+        </div>
       </div>
     </div>
   </main>
